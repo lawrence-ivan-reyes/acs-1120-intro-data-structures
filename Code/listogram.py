@@ -46,12 +46,19 @@ class Listogram(list):
     def index_of(self, target):
         """Return the index of entry containing given target word if found in
         this histogram, or None if target word is not found."""
-        # TODO: Implement linear search to find index of entry with target word
+        for i, item in enumerate(self): # looping through items w their positions (e.g., 0,['fish',1], and then 1,['red',4])
+             if item[0] == target:
+                return i
+        return None
 
     def sample(self):
         """Return a word from this histogram, randomly sampled by weighting
         each word's probability of being chosen by its observed frequency."""
-        # TODO: Randomly choose a word based on its frequency in this histogram
+        # basically the same function as in dictogram.py
+        weighted_words = [] # list to hold repeated words
+        for word, freq in self: # for every word and its freq...
+            weighted_words.extend([word] * freq) # add the word to list freq times (e.g., if 'fish':4, add fish four times)
+        return random.choice(weighted_words) # pick one random word from ^ that list 
 
 
 def print_histogram(word_list):
