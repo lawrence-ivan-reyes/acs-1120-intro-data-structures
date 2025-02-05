@@ -34,7 +34,7 @@ class Listogram(list):
         for item in self: # looping through every [word, count] pair
             if item[0] == word: # if word is found...
                 return item[1] # return its count
-        return[0] # if word isnt found, return 0
+        return 0 # if word isnt found, return 0
 
     def __contains__(self, word):
         """Return boolean indicating if given word is in this histogram."""
