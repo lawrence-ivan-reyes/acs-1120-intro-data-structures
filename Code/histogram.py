@@ -23,9 +23,9 @@ def frequency(word, histogram):
     return histogram.get(word.lower(), 0)
 
 # testing!!!
-hist = histogram("source_text.txt")
+# hist = histogram("source_text.txt")
 
-print("Unique words:", unique_words(hist))
-print("Times 'minutes' appears:", frequency("minutes", hist))
-print("Times 'week' appears:", frequency("week", hist))
-print("Times 'the' appears:", frequency("the", hist))
+# print("Unique words:", unique_words(hist))
+# print("Times 'minutes' appears:", frequency("minutes", hist))
+# print("Times 'week' appears:", frequency("week", hist))
+# print("Times 'the' appears:", frequency("the", hist))
