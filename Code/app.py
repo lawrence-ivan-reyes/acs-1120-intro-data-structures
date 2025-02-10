@@ -13,8 +13,13 @@ hist = histogram("source_text.txt") # creates histo from my source text
 def home():
     """Route that returns a web page containing the generated text."""
     words = list(hist.keys()) # getting all words from histo as a list
-    index = random.randint(0, len(words) - 1) # pick random index bw 0 & last index of ^ list
-    return f"<p>{words[index]}</p>" 
+    sentence_length = random.randint(20, 30)
+
+    # generating rand words & joining w spaces
+    random_words = [words[random.randint(0, len(words) - 1)] for _ in range(sentence_length)]
+    sentence = " ".join(random_words) 
+
+    return f"<p>{sentence}</p>"
 
 if __name__ == "__main__":
     """To run the Flask server, execute `python app.py` in your terminal.
