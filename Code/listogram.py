@@ -21,13 +21,15 @@ class Listogram(list):
     def add_count(self, word, count=1):
         """Increase frequency count of given word by given count amount."""
         for item in self: # looping through every [word, count] pair in list
-            if item[0] == word: # if word is found...
-                item[1] += count # incr its count
-                self.tokens += count # incr total words
+            if item[0] == word: 
+                # creating a new tup;e w updated count
+                new_count = item[1] + count
+                self[self.index_of(word)] = (word, new_count)
+                self.tokens += count
                 return
-        self.append([word, count]) # if word isnt found, add new [word, count] pair
-        self.types += 1 # incr unique word count
-        self.tokens += count # incr total words
+        self.append((word, count))
+        self.types += 1
+        self.tokens += count 
 
     def frequency(self, word):
         """Return frequency count of given word, or 0 if word is not found."""
