@@ -67,7 +67,7 @@ class MarkovChain:
             return "Could not generate sentence."
 
 if __name__ == "__main__":
-    markov = MarkovChain("source_text.txt")
+    markov = MarkovChain("data/source_text.txt")
     
     print("Examples:")
     for i in range(5):
