@@ -1,10 +1,13 @@
 import random
 import re
+import os
 
 class MarkovChain:
-    def __init__(self, source_text):
+    def __init__(self):
         # initializing w my source text
-        self.source_text = self.read_source_text(source_text)
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        file_path = os.path.join(script_dir, "data", "source_text.txt")
+        self.source_text = self.read_source_text(file_path)
         self.chain = self.build_chain()
     
     def read_source_text(self, source_text):
@@ -67,8 +70,8 @@ class MarkovChain:
             return "Could not generate sentence."
 
 if __name__ == "__main__":
-    markov = MarkovChain("data/source_text.txt")
-    
+    markov = MarkovChain()
+
     print("Examples:")
     for i in range(5):
         print(f"\n{i+1}. {markov.generate_sentence()}")
