@@ -1,17 +1,25 @@
 import random
 import re
 import os
+from dictogram import Dictogram
 
-class MarkovChain:
-    def __init__(self):
-        # initializing w my source text
-        script_dir = os.path.dirname(os.path.abspath(__file__))
-        file_path = os.path.join(script_dir, "data", "source_text.txt")
-        self.source_text = self.read_source_text(file_path)
-        self.chain = self.build_chain()
+class MarkovChain(dict):
+    def __init__(self, source_text_path=None):
+        # initializing this markovchain as a new dict and build chain from my source txt
+        super(MarkovChain, self).__init__() 
+        
+        # setting up path to the source txt
+        if source_text_path is None:
+            script_dir = os.path.dirname(os.path.abspath(__file__))
+            source_text_path = os.path.join(script_dir, "data", "source_text.txt")
+        
+        # reading/storing source txt
+        self.source_text = self.read_source_text(source_text_path)
+        
+        self.build_chain()
     
     def read_source_text(self, source_text):
-        # read & split
+        # read text file and split it into words
         with open(source_text) as file:
             text = file.read()
             return text.split()
@@ -25,49 +33,47 @@ class MarkovChain:
         return [word for word in self.source_text if word[-1] in ".!?"]
     
     def build_chain(self):
-        # build markov chain dictionaryu
-        chain = {}
-        
+        # iterate through words (except last one)
         for i in range(len(self.source_text) - 1):
-            current = self.source_text[i]
-            next_word = self.source_text[i + 1]
+            current = self.source_text[i]  
+            next_word = self.source_text[i + 1] 
             
-            if current not in chain:
-                chain[current] = []
-            chain[current].append(next_word)
+            # initialize dictogram for current word if not present
+            if current not in self:
+                self[current] = Dictogram()
             
-        return chain
+            # add next word to dictogram of possible next words
+            self[current].add_count(next_word)
     
     def generate_sentence(self, max_words=10):
-        # generate sentence w markov chain
-        try:
-            # starting w capital word
-            current = random.choice(self.find_starting_words())
-            sentence = [current]
+        # starting w capitalized word
+        starting_words = self.find_starting_words()
+        current = random.choice(starting_words)
+        sentence = [current]
+        
+        # for middle of sentence
+        for _ in range(max_words - 2):  # -2 for start/end words
+            # if current word not in chain or has no next words, break
+            if current not in self or not self[current]:
+                break
             
-            # for the middle of sentence
-            for _ in range(max_words - 2):  # -2 for start/end words
-                if current not in self.chain:
-                    break
-                current = random.choice(self.chain[current])
-                sentence.append(current)
-                
-                # stop if we hit an ending
-                if current[-1] in ".!?":
-                    break
+            # using dictogram's sample method to weight selection by freq
+            current = self[current].sample()
+            sentence.append(current)
             
-            # ensure we end with punctuation!!
-            if sentence[-1][-1] not in ".!?":
-                ending = random.choice(self.find_ending_words())
-                sentence.append(ending)
-            
-            # clean text
-            result = " ".join(sentence)
-            return re.sub(r"[\(\)\{\}]", "", result)
-            
-        except Exception as e:
-            print(f"Error generating sentence: {e}")
-            return "Could not generate sentence."
+            # stop if we hit an ending (word w punctuation)
+            if current[-1] in ".!?":
+                break
+        
+        # ensure we end with punctuation if needed
+        if sentence and sentence[-1][-1] not in ".!?":
+            ending_words = self.find_ending_words()
+            ending = random.choice(ending_words)
+            sentence.append(ending)
+        
+        # clean text and return result
+        result = " ".join(sentence)
+        return re.sub(r"[\(\)\{\}]", "", result)
 
 if __name__ == "__main__":
     markov = MarkovChain()
@@ -75,3 +81,4 @@ if __name__ == "__main__":
     print("Examples:")
     for i in range(5):
         print(f"\n{i+1}. {markov.generate_sentence()}")
+
