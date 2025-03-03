@@ -24,8 +24,7 @@ class MarkovChain(dict):
         with open(source_text) as file:
             text = file.read()
             text = self.clean_text(text)
-            # splitting by whitespace but keeping punct attached to words
-            words = re.findall(r'\S+', text)
+            words = self.tokenize(text)
             return words
     
     def clean_text(self, text):
@@ -40,6 +39,32 @@ class MarkovChain(dict):
         
         return text
     
+    def tokenize(self, text):
+        # splittting whitespace to get raw tokens
+        raw_tokens = re.findall(r'\S+', text)
+        tokens = []
+        
+        # processing each raw token
+        for token in raw_tokens:
+            # keeping certain abbrevs and contractions as is
+            if re.match(r'[A-Za-z]+\.[A-Za-z]+\.', token):  # e.g. U.S.A.
+                tokens.append(token)
+                continue
+                
+            # keep hyphenated words together
+            if re.search(r'[^\w\'-]', token):
+                
+                # keep ending punct separate while preserving hyphenated words
+                if token[-1] in '.!?,;:)]}' and not token[-2:] == '."':
+                    tokens.append(token[:-1])
+                    tokens.append(token[-1])
+                else:
+                    tokens.append(token)
+            else:
+                tokens.append(token)
+                
+        return tokens
+
     def find_starting_words(self):
         # find words that can start a sentence (capitalized!!)
         return [word for word in self.source_text if word[0].isupper()]
