@@ -13,13 +13,13 @@ markov_chain = MarkovChain()
 @app.route("/")
 def home():
     """Route that returns a web page containing the generated text."""
-    sentence = markov_chain.generate_sentence(max_words=25)
+    sentence = markov_chain.generate_sentence(max_words=20)
     return render_template('index.html', sentence=sentence)
 
 @app.route("/generate")
 def generate():
     """API endpoint that returns just the new sentence."""
-    sentence = markov_chain.generate_sentence(max_words=25)
+    sentence = markov_chain.generate_sentence(max_words=20)
     return sentence
 
 if __name__ == "__main__":
