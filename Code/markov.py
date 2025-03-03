@@ -79,7 +79,7 @@ class MarkovChain(dict):
         
         # clean text and return result
         result = " ".join(sentence)
-        return re.sub(r"[\(\)\{\}]", "", result)
+        return re.sub(r"[\(\)\{\}\"]", "", result)
 
 if __name__ == "__main__":
     markov = MarkovChain()
