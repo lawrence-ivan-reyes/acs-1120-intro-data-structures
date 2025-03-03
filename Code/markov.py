@@ -1,6 +1,7 @@
 import random
 import re
 import os
+import html
 from .dictogram import Dictogram
 
 class MarkovChain(dict):
@@ -22,7 +23,22 @@ class MarkovChain(dict):
         # read text file and split it into words
         with open(source_text) as file:
             text = file.read()
-            return text.split()
+            text = self.clean_text(text)
+            # splitting by whitespace but keeping punct attached to words
+            words = re.findall(r'\S+', text)
+            return words
+    
+    def clean_text(self, text):
+        # cxonverting html to their unique unicode equivs
+        text = html.unescape(text)
+        
+        text = text.replace('"', '"').replace('"', '"')
+        text = text.replace(''', "'").replace(''', "'")
+        
+        # removing unwanted formatting (like _word_ or *word*)
+        text = re.sub(r'([_*])(.*?)([_*])', r'\2', text)
+        
+        return text
     
     def find_starting_words(self):
         # find words that can start a sentence (capitalized!!)
