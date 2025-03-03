@@ -1,7 +1,7 @@
 import random
 import re
 import os
-from dictogram import Dictogram
+from .dictogram import Dictogram
 
 class MarkovChain(dict):
     def __init__(self, source_text_path=None):
