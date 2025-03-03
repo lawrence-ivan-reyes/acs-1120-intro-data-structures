@@ -1,12 +1,159 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tweet Generator</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Harry Potter Tweet Generator</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap');
+        
+        body {
+            background-color: #0c1425;
+            background-image: url('https://www.transparenttextures.com/patterns/parchment.png');
+            font-family: 'Cinzel', serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            color: #d3a625;
+        }
+        
+        .container {
+            width: 700px;
+            max-width: 95%;
+            background-color: rgba(35, 35, 45, 0.95);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+            text-align: center;
+            border: 2px solid #740001;
+        }
+        
+        h1 {
+            color: #d3a625;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+            position: relative;
+        }
+        
+        h1:after {
+            content: "⚡";
+            position: absolute;
+            font-size: 0.5em;
+            top: 0;
+            margin-left: 5px;
+        }
+        
+        .tweet-container {
+            position: relative;
+            width: 100%;
+            height: 150px;
+            margin-bottom: 30px;
+        }
+        
+        .tweet-box {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(15, 15, 25, 0.7);
+            padding: 0;
+            border-radius: 8px;
+            border: 1px solid #d3a625;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        
+        .tweet-content {
+            width: 90%;
+            max-height: 80%;
+            margin: 0;
+            padding: 0;
+            font-size: 1.4em;
+            line-height: 1.5;
+            color: #f5f5f5;
+            text-align: center;
+            overflow-y: auto;
+            transition: opacity 0.5s ease;
+        }
+        
+        button {
+            background-color: #740001;
+            color: #f5f5f5;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1em;
+            border-radius: 50px;
+            cursor: pointer;
+            font-family: 'Cinzel', serif;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            border: 2px solid #d3a625;
+            width: 220px;
+            min-width: 220px; 
+            display: inline-block;
+        }
+        
+        button:hover {
+            background-color: #900;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+        }
+        
+        .footer {
+            margin-top: 30px;
+            font-size: 0.9em;
+            color: #888;
+        }
+    </style>
 </head>
 <body>
-    <blockquote>TODO: Replace this text with the sentence you generated!</blockquote>
+    <div class="container">
+        <h1>Magical Tweet Generator</h1>
+        <div class="tweet-container">
+            <div class="tweet-box">
+                <p class="tweet-content" id="tweetContent">{{ sentence }}</p>
+            </div>
+        </div>
+        <button id="generateBtn">Cast New Tweet</button>
+        <div class="footer">
+            Crafted with magic at Hogwarts School of Witchcraft and Wizardry
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('generateBtn').addEventListener('click', function() {
+            const btn = this;
+            const tweetContent = document.getElementById('tweetContent');
+            
+            btn.disabled = true;
+            btn.textContent = "Brewing...";
+            
+            tweetContent.style.opacity = "0";
+            
+            fetch(window.location.href + 'generate')
+                .then(response => response.text())
+                .then(data => {
+                    setTimeout(() => {
+                        tweetContent.innerHTML = data;
+                        tweetContent.style.opacity = "1";
+                        
+                        btn.disabled = false;
+                        btn.textContent = "Cast New Tweet";
+                    }, 500);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    tweetContent.style.opacity = "1";
+                    btn.disabled = false;
+                    btn.textContent = "Cast New Tweet";
+                });
+        });
+    </script>
 </body>
 </html>
