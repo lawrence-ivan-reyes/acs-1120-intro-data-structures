@@ -1,6 +1,5 @@
 """Main script, uses other modules to generate sentences."""
-from flask import Flask
-# from .histogram import histogram # adding . to import from same directory
+from flask import Flask, render_template
 import random
 from .markov import MarkovChain
 
@@ -14,15 +13,14 @@ markov_chain = MarkovChain()
 @app.route("/")
 def home():
     """Route that returns a web page containing the generated text."""
-    # words = list(hist.keys()) # getting all words from histo as a list
-    # sentence_length = random.randint(20, 30)
     sentence = markov_chain.generate_sentence(max_words=25)
+    return render_template('index.html', sentence=sentence)
 
-    # # generating rand words & joining w spaces
-    # random_words = [words[random.randint(0, len(words) - 1)] for _ in range(sentence_length)]
-    # sentence = " ".join(random_words) 
-
-    return f"<p>{sentence}</p>"
+@app.route("/generate")
+def generate():
+    """API endpoint that returns just the new sentence."""
+    sentence = markov_chain.generate_sentence(max_words=25)
+    return sentence
 
 if __name__ == "__main__":
     """To run the Flask server, execute `python app.py` in your terminal.
