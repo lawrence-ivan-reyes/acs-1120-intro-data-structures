@@ -2,7 +2,7 @@
 from flask import Flask
 # from .histogram import histogram # adding . to import from same directory
 import random
-from markov import MarkovChain
+from .markov import MarkovChain
 
 app = Flask(__name__)
 
