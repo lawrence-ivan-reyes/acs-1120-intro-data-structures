@@ -19,25 +19,10 @@ class MarkovChain(dict):
         self.build_chain()
     
     def read_source_text(self, source_text):
+        # read text file and split it into words
         with open(source_text) as file:
             text = file.read()
-            
-            # finding all quoted text
-            quoted_sections = re.findall(r'"[^"]*"', text)
-            
-            # replacing spaces in quoted text with a special character
-            for quote in quoted_sections:
-                # creating a ver w spaces replaced by a special char
-                no_spaces_quote = quote.replace(' ', '§')
-                # replacing original quote w the no-spaces ver
-                text = text.replace(quote, no_spaces_quote)
-            
-            words = text.split()
-            
-            for i in range(len(words)):
-                words[i] = words[i].replace('§', ' ')
-                
-            return words
+            return text.split()
     
     def find_starting_words(self):
         # find words that can start a sentence (capitalized!!)
@@ -66,8 +51,11 @@ class MarkovChain(dict):
         current = random.choice(starting_words)
         sentence = [current]
         
+        # bringing in counter
+        word_count = 1
+        
         # for middle of sentence
-        for _ in range(max_words - 2):  # -2 for start/end words
+        while word_count < max_words - 1:  
             # if current word not in chain or has no next words, break
             if current not in self or not self[current]:
                 break
@@ -75,16 +63,19 @@ class MarkovChain(dict):
             # using dictogram's sample method to weight selection by freq
             current = self[current].sample()
             sentence.append(current)
+            word_count += 1
             
             # stop if we hit an ending (word w punctuation)
             if current[-1] in ".!?":
-                break
+                return " ".join(sentence)  
         
-        # ensure we end with punctuation if needed
+        # if we reached word limit but don't have punctuation ending
         if sentence and sentence[-1][-1] not in ".!?":
-            ending_words = self.find_ending_words()
-            ending = random.choice(ending_words)
-            sentence.append(ending)
+            # only add ending word if we haven't reached max_words yet
+            if word_count < max_words:
+                ending_words = self.find_ending_words()
+                ending = random.choice(ending_words)
+                sentence.append(ending)
         
         # clean text and return result
         result = " ".join(sentence)
