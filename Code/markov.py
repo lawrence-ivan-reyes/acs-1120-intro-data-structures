@@ -46,6 +46,10 @@ class MarkovChain(dict):
         
         # processing each raw token
         for token in raw_tokens:
+            # Skip empty tokens
+            if not token:
+                continue
+                
             # keeping certain abbrevs and contractions as is
             if re.match(r'[A-Za-z]+\.[A-Za-z]+\.', token):  # e.g. U.S.A.
                 tokens.append(token)
@@ -56,22 +60,27 @@ class MarkovChain(dict):
                 
                 # keep ending punct separate while preserving hyphenated words
                 if token[-1] in '.!?,;:)]}' and not token[-2:] == '."':
-                    tokens.append(token[:-1])
+                    # Only add non-empty parts
+                    if token[:-1]:
+                        tokens.append(token[:-1])
                     tokens.append(token[-1])
                 else:
                     tokens.append(token)
             else:
                 tokens.append(token)
-                
+        
+        # final filter to ensure no empty strings made it through
+        tokens = [t for t in tokens if t]
+                    
         return tokens
 
     def find_starting_words(self):
         # find words that can start a sentence (capitalized!!)
-        return [word for word in self.source_text if word[0].isupper()]
+        return [word for word in self.source_text if word and word[0].isupper()]
     
     def find_ending_words(self):
         # find words that can end a sentence (., !, ?) 
-        return [word for word in self.source_text if word[-1] in ".!?"]
+        return [word for word in self.source_text if word and word[-1] in ".!?"]
     
     def build_chain(self):
         # iterate through words (except last one)
