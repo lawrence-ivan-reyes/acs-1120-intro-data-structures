@@ -95,59 +95,59 @@ class MarkovChain(dict):
             # add next word to dictogram of possible next words
             self[current].add_count(next_word)
     
-def generate_sentence(self, max_words=10):
-    # starting w capitalized word
-    starting_words = self.find_starting_words()
-    current = random.choice(starting_words)
-    sentence = [current]
-    
-    # bringing in counter
-    word_count = 1
-    
-    # for middle of sentence
-    while word_count < max_words - 1:  
-        # if current word not in chain or has no next words, break
-        if current not in self or not self[current]:
-            break
+    def generate_sentence(self, max_words=10):
+        # starting w capitalized word
+        starting_words = self.find_starting_words()
+        current = random.choice(starting_words)
+        sentence = [current]
         
-        # using dictogram's sample method to weight selection by freq
-        current = self[current].sample()
-        sentence.append(current)
-        word_count += 1
+        # bringing in counter
+        word_count = 1
         
-        # stop if we hit an ending (word w punctuation)
-        if current[-1] in ".!?":
-            return self.join_sentence_parts(sentence)
-    
-    # if we reached word limit but don't have punctuation ending
-    if sentence and sentence[-1][-1] not in ".!?":
-        # only add ending word if we haven't reached max_words yet
-        if word_count < max_words:
-            ending_words = self.find_ending_words()
-            ending = random.choice(ending_words)
-            sentence.append(ending)
-    
-    # clean text and return result
-    result = self.join_sentence_parts(sentence)
-    return re.sub(r"[\(\)\{\}\"]", "", result)
-
-def join_sentence_parts(self, parts):
-    """Join sentence parts with appropriate spacing."""
-    if not parts:
-        return ""
-    
-    result = parts[0]
-    
-    for i in range(1, len(parts)):
-        current = parts[i]
-        
-        # no space before punct!!
-        if current and current[0] in '.,;:!?)]}':
-            result += current
-        else:
-            result += ' ' + current
+        # for middle of sentence
+        while word_count < max_words - 1:  
+            # if current word not in chain or has no next words, break
+            if current not in self or not self[current]:
+                break
             
-    return result
+            # using dictogram's sample method to weight selection by freq
+            current = self[current].sample()
+            sentence.append(current)
+            word_count += 1
+            
+            # stop if we hit an ending (word w punctuation)
+            if current[-1] in ".!?":
+                return self.join_sentence_parts(sentence)
+        
+        # if we reached word limit but don't have punctuation ending
+        if sentence and sentence[-1][-1] not in ".!?":
+            # only add ending word if we haven't reached max_words yet
+            if word_count < max_words:
+                ending_words = self.find_ending_words()
+                ending = random.choice(ending_words)
+                sentence.append(ending)
+        
+        # clean text and return result
+        result = self.join_sentence_parts(sentence)
+        return re.sub(r"[\(\)\{\}\"]", "", result)
+
+    def join_sentence_parts(self, parts):
+        """Join sentence parts with appropriate spacing."""
+        if not parts:
+            return ""
+        
+        result = parts[0]
+        
+        for i in range(1, len(parts)):
+            current = parts[i]
+            
+            # no space before punct!!
+            if current and current[0] in '.,;:!?)]}':
+                result += current
+            else:
+                result += ' ' + current
+                
+        return result
 
 if __name__ == "__main__":
     markov = MarkovChain()
