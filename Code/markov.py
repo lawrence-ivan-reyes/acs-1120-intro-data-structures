@@ -19,10 +19,25 @@ class MarkovChain(dict):
         self.build_chain()
     
     def read_source_text(self, source_text):
-        # read text file and split it into words
         with open(source_text) as file:
             text = file.read()
-            return text.split()
+            
+            # finding all quoted text
+            quoted_sections = re.findall(r'"[^"]*"', text)
+            
+            # replacing spaces in quoted text with a special character
+            for quote in quoted_sections:
+                # creating a ver w spaces replaced by a special char
+                no_spaces_quote = quote.replace(' ', '§')
+                # replacing original quote w the no-spaces ver
+                text = text.replace(quote, no_spaces_quote)
+            
+            words = text.split()
+            
+            for i in range(len(words)):
+                words[i] = words[i].replace('§', ' ')
+                
+            return words
     
     def find_starting_words(self):
         # find words that can start a sentence (capitalized!!)
